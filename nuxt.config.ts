@@ -21,4 +21,7 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
+  serverMiddleware: [
+    { path: '/api/snipcart', handler: '~/server-middleware/snipcart-proxy.js' }
+  ]
 })

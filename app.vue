@@ -37,9 +37,9 @@
 
 <script setup lang="ts">
 import { createClient } from "contentful";
-import type { Entry } from "contentful";
+import type { Entry, Asset } from "contentful";
 import { useRuntimeConfig } from "#app";
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 
 const config = useRuntimeConfig();
@@ -52,13 +52,7 @@ const client = createClient({
 interface AboutFields extends Entry {
   contentTypeId: string;
   copy: any;
-  image: {
-    fields: {
-      file: {
-        url: string;
-      };
-    };
-  } | null;
+  image: Asset | null;
   title: string;
 }
 
@@ -67,8 +61,6 @@ const image = ref<string | null>(null);
 const title = ref<string | null>(null);
 const richTextHtml = ref<string | null>(null);
 const snipcartApiKey = config.public.snipcartApiKey;
-const snipcartSecretApiKey = config.public.snipcartSecretApiKey;
-const snipcartApiEndpoint = " https://app.snipcart.com/api";
 
 interface Product {
   id: string;
@@ -77,6 +69,15 @@ interface Product {
   price: number;
   image: string;
   url: string;
+}
+
+interface ProductFields extends Entry {
+  contentTypeId: string;
+  title: string;
+  id: number;
+  price: number;
+  stock: number;
+  image: { fields: { file: { url: string } } } | null;
 }
 
 const items = ref<Product[]>([]);
@@ -106,41 +107,45 @@ useHead({
 onMounted(async () => {
   try {
     // Fetch About content from Contentful
-    const response = await client.getEntries<AboutFields>({
-      content_type: "about",
-    });
-    if (response.items.length > 0) {
-      const data = response.items[0].fields;
-      copy.value = data.copy;
-      image.value = data.image.fields.file.url; // Access the image URL
-      title.value = data.title;
-    } else {
-      console.warn('No entries found for content type "about".');
-    }
+    await fetchAboutContent();
 
-    // Fetch products from Snipcart
-    const productsResponse = await fetch(`${snipcartApiEndpoint}/products`, {
-      headers: {
-        Authorization: `Bearer ${snipcartSecretApiKey}`,
-      },
-    });
-    const productsData = await productsResponse.json();
-    items.value = productsData.items.map((product: any) => ({
-      id: product.id,
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      image: product.image,
-      url: product.url,
-    }));
+    // Fetch products from Contentful
+    await fetchProducts();
   } catch (error) {
     console.error("Error fetching entries:", error);
   }
 });
 
-watch(copy, (newCopy) => {
-  if (newCopy) {
-    richTextHtml.value = documentToHtmlString(newCopy);
+async function fetchAboutContent() {
+  const response = await client.getEntries<AboutFields>({
+    content_type: "about",
+  });
+  if (response.items.length > 0) {
+    const data = response.items[0].fields;
+    copy.value = data.copy;
+    image.value = data.image?.fields.file.url || null; // Access the image URL
+    title.value = data.title;
+    richTextHtml.value = documentToHtmlString(data.copy);
+  } else {
+    console.warn('No entries found for content type "about".');
   }
-});
+}
+
+async function fetchProducts() {
+  const response = await client.getEntries<ProductFields>({
+    content_type: "product",
+  });
+  if (response.items.length > 0) {
+    items.value = response.items.map((item) => ({
+      id: `${item.fields.id}`,
+      name: item.fields.title,
+      description: item.fields.title, // Assuming description is the same as title
+      price: item.fields.price,
+      image: item.fields.image?.fields.file.url || '',
+      url: `/products/${item.fields.id}`, // Assuming URL is generated based on product ID
+    }));
+  } else {
+    console.warn('No entries found for content type "product".');
+  }
+}
 </script>
