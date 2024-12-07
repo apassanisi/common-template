@@ -7,7 +7,17 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       contentfulSpaceId: process.env.CONTENTFUL_SPACE_ID,
-      contentfulAccessToken: process.env.CONTENTFUL_ACCESS_TOKEN
+      contentfulAccessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
+      snipcartApiKey: process.env.SNIPCART_API_KEY
     }
-  }
+  },
+  css: [
+    '~/assets/css/tailwind.css'
+  ],
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
+    },
+  },
 })
