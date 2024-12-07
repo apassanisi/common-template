@@ -8,7 +8,8 @@ export default defineNuxtConfig({
     public: {
       contentfulSpaceId: process.env.CONTENTFUL_SPACE_ID,
       contentfulAccessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
-      snipcartApiKey: process.env.SNIPCART_API_KEY
+      snipcartApiKey: process.env.SNIPCART_API_KEY,
+      snipcartSecretApiKey: process.env.SNIPCART_SECRET_API_KEY,
     }
   },
   css: [
