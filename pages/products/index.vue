@@ -49,3 +49,27 @@ onMounted(async () => {
   loading.value = false;
 });
 </script>
+
+<style scoped>
+h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+  h1 {
+    font-size: 3rem;
+  }
+}
+
+.v-card {
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+  .v-card {
+    margin-bottom: 2rem;
+  }
+}
+</style>

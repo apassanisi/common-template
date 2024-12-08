@@ -2,55 +2,105 @@
   <v-container>
     <v-row>
       <v-col cols="12" class="text-center">
-        <h1 v-if="aboutContent" class="text-4xl font-bold mb-4">{{ aboutContent.title }}</h1>
-        <v-img v-if="aboutContent && aboutContent.image" :src="aboutContent.image" alt="About Image" class="mx-auto mb-4" />
-        <div v-if="aboutContent" v-html="aboutContent.richTextHtml" class="prose mx-auto"></div>
+        <h1 class="text-4xl font-bold mb-4">Welcome to the Artist Portfolio & Shop</h1>
+        <p class="text-lg mb-8">Explore the collection of artworks and shop your favorites.</p>
       </v-col>
     </v-row>
-    <v-row v-if="products && products.length" class="mt-8">
-      <v-col v-for="product in products" :key="product.id" cols="12" md="4">
-        <v-card>
-          <v-img :src="product.image" alt="Product Image" class="mb-4" />
-          <v-card-title>{{ product.title }}</v-card-title>
-          <v-card-subtitle class="text-gray-700 mb-4">{{ product.description }}</v-card-subtitle>
-          <v-card-text class="text-lg font-semibold mb-4">${{ product.price }}</v-card-text>
-          <v-card-actions>
-            <router-link :to="`/products/${product.id}`">
-              <v-btn color="primary">View Details</v-btn>
-            </router-link>
-            <SnipcartButton
-              :id="product.id"
-              :price="product.price"
-              :image="product.image"
-              :name="product.title"
-            />
-          </v-card-actions>
-        </v-card>
+    <v-carousel>
+      <v-carousel-item v-for="artwork in artworks" :key="artwork.id">
+        <v-img :src="artwork.image" :alt="artwork.title"></v-img>
+          <h3>{{ artwork.title }}</h3>
+          <p>{{ artwork.description }}</p>
+      </v-carousel-item>
+    </v-carousel>
+    <v-row class="mt-8" id="contact">
+      <v-col cols="12" class="text-center">
+        <h2 class="text-2xl font-bold mb-4">Contact</h2>
+        <p class="text-lg mb-4">Feel free to reach out for commissions or inquiries.</p>
+        <p class="text-lg mb-4">Email: artist@example.com</p>
+        <p class="text-lg mb-4">Phone: (123) 456-7890</p>
+        <v-btn color="primary" @click="openModal">Schedule a Call</v-btn>
       </v-col>
     </v-row>
-    <v-row v-else class="text-center mt-8">
-      <v-col cols="12">
-        <p>No products available at the moment.</p>
-      </v-col>
-    </v-row>
+    <div v-show="isModalOpen" class="fixed inset-0 bg-black flex items-center justify-center z-50" @click.self="closeModal">
+      <Modal @close="closeModal">
+        <div class="p-4">
+          <h2 class="text-xl font-bold mb-4">Schedule a Call</h2>
+          <v-btn icon @click="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <div class="calendly-inline-widget" :data-url="calendlyUrl"></div>
+        </div>
+      </Modal>
+    </div>
   </v-container>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useContentful } from '~/composables/useContentful';
-import SnipcartButton from '~/components/SnipcartButton.vue';
-import type { Product, AboutFields } from '@/types';
+import { useToggle } from '@vueuse/core';
+import Modal from '~/components/Modal.vue';
+import type { Artwork } from '~/types';
+import { useRuntimeConfig } from '#app';
+import { VCarousel, VCarouselItem, VImg } from 'vuetify/components';
 
-const loading = ref(true);
-const aboutContent = ref<AboutFields | null>(null);
-const products = ref<Product[]>([]);
+const artworks = ref<Artwork[]>([]);
+const [isModalOpen, toggleModal] = useToggle(false);
+const config = useRuntimeConfig();
+const calendlyUrl = ref(config.public.calendlyUrl || 'https://calendly.com/your-calendly-url');
 
-const { fetchAboutContent, fetchProducts } = useContentful();
-
-onMounted(async () => {
-  aboutContent.value = await fetchAboutContent();
-  products.value = await fetchProducts();
-  loading.value = false;
+onMounted(() => {
+  // Mock data for artworks
+  artworks.value = [
+    {
+      id: '1',
+      title: 'Sunset Over the Mountains',
+      description: 'A beautiful sunset over the mountains.',
+      image: 'https://via.placeholder.com/800x600',
+    },
+    {
+      id: '2',
+      title: 'City Skyline',
+      description: 'A stunning view of the city skyline at night.',
+      image: 'https://via.placeholder.com/800x600',
+    },
+    // Add more mock artworks as needed
+  ];
 });
+
+function openModal() {
+  toggleModal(true);
+}
+
+function closeModal() {
+  toggleModal(false);
+}
 </script>
+
+<style scoped>
+h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+  h1 {
+    font-size: 3rem;
+  }
+}
+
+.v-carousel-item {
+  text-align: center;
+}
+
+.v-btn {
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+  .v-btn {
+    margin-bottom: 2rem;
+  }
+}
+</style>

@@ -51,3 +51,27 @@ function goBack() {
   router.back();
 }
 </script>
+
+<style scoped>
+h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+  h1 {
+    font-size: 3rem;
+  }
+}
+
+.v-btn {
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+  .v-btn {
+    margin-bottom: 2rem;
+  }
+}
+</style>
