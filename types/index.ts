@@ -13,6 +13,7 @@ export interface ProductFields extends EntrySkeletonType {
   fields: {
     id: number;
     title: string;
+    description: string;
     price: number;
     image: { fields: { file: { url: string } } } | null;
   };
