@@ -1,23 +1,24 @@
 import 'dotenv/config';
+import { defineNuxtConfig } from 'nuxt/config';
+import vuetify from 'vite-plugin-vuetify';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2024-11-01',
   ssr: true,
   nitro: {
     preset: 'netlify' 
   },
-  generate: {},
-  devtools: { enabled: true },
   runtimeConfig: {
     public: {
       contentfulSpaceId: process.env.CONTENTFUL_SPACE_ID,
       contentfulAccessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
       snipcartApiKey: process.env.SNIPCART_API_KEY,
       snipcartSecretApiKey: process.env.SNIPCART_SECRET_API_KEY,
+      calendlyUrl: process.env.CALENDLY_URL,
     }
   },
   css: [
+    'vuetify/styles',
     '~/assets/css/tailwind.css'
   ],
   postcss: {
@@ -25,5 +26,16 @@ export default defineNuxtConfig({
       tailwindcss: {},
       autoprefixer: {},
     },
+  },
+  build: {
+    transpile: ['vuetify', '@vueuse/core'],
+  },
+  vite: {
+    define: {
+      'process.env.DEBUG': false,
+    },
+    plugins: [
+      vuetify(),
+    ],
   },
 })
