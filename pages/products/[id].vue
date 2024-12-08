@@ -58,7 +58,9 @@ onMounted(async () => {
         description: item.title, // Assuming description is the same as title
         price: item.price,
         image: item.image?.fields.file.url || '',
-        url: `/products/${item.fields.id}`, // Use dynamic route      };
+        url: `https://common-template.netlify.app/products/${item.fields.id}`, // Use dynamic route
+      };
+      console.log('Product data:', product.value); // Log product data
     } else {
       console.warn('No entries found for product ID:', productId);
     }

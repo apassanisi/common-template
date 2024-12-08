@@ -101,8 +101,9 @@ async function fetchProducts() {
       description: item.fields.title, // Assuming description is the same as title
       price: item.fields.price,
       image: item.fields.image?.fields.file.url || '',
-      url: `/products/${item.fields.id}`, // Use dynamic route
+      url: `https://common-template.netlify.app/products/${item.fields.id}`, // Use dynamic route
     }));
+    console.log('Product list:', items.value); // Log product list
   } else {
     console.warn('No entries found for content type "product".');
   }
