@@ -26,7 +26,7 @@ import { ref } from 'vue';
 import { useRuntimeConfig } from "#app";
 
 const config = useRuntimeConfig();
-const snipcartApiKey = config.public.snipcartApiKey;
+const snipcartApiKey = config.public.snipcartApiKey || 'your-default-api-key';
 const menuOpen = ref(false);
 
 function toggleMenu() {

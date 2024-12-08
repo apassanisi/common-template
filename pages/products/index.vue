@@ -15,14 +15,6 @@
           <p class="text-gray-700 mb-4">{{ item.description }}</p>
           <p class="text-lg font-semibold mb-4">${{ item.price }}</p>
         </router-link>
-        <SnipcartButton
-          :id="item.id"
-          :price="item.price"
-          :url="item.url"
-          :description="item.description"
-          :image="item.image"
-          :name="item.title"
-        />
       </div>
     </div>
     <div v-else class="text-center mt-8">
@@ -36,7 +28,6 @@ import { createClient } from "contentful";
 import { useRuntimeConfig } from "#app";
 import { ref, onMounted } from "vue";
 import type { Product, ProductFields } from '~/types';
-import SnipcartButton from '~/components/SnipcartButton.vue';
 
 const config = useRuntimeConfig();
 
@@ -64,7 +55,7 @@ async function fetchProducts() {
     items.value = response.items.map((item) => ({
       id: `${item.fields.id}`,
       title: item.fields.title,
-      description: item.fields.title, // Assuming description is the same as title
+      description: item.fields.description, // Correctly fetch description
       price: item.fields.price,
       image: item.fields.image?.fields.file.url || '',
       url: `/products/${item.fields.id}`, // Use dynamic route

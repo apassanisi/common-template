@@ -11,7 +11,6 @@
       <SnipcartButton
         :id="product.id"
         :price="product.price"
-        :url="product.url"
         :description="product.description"
         :image="product.image"
         :name="product.title"
@@ -55,7 +54,7 @@ onMounted(async () => {
       product.value = {
         id: `${item.id}`,
         title: item.title,
-        description: item.title, // Assuming description is the same as title
+        description: item.description, // Correctly fetch description
         price: item.price,
         image: item.image?.fields.file.url || '',
         url: `/products/${item.id}`, // Use dynamic route
