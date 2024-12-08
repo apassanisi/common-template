@@ -55,10 +55,10 @@ onMounted(async () => {
       product.value = {
         id: `${item.id}`,
         title: item.title,
-        description: item.title,
+        description: item.description, // Correctly fetch description
         price: item.price,
         image: item.image?.fields.file.url || '',
-        url: `/}`, // Use dynamic route
+        url: `/products/${item.id}`, // Correctly set the product URL
       };
       console.log('Product data:', product.value); // Log product data
     } else {
