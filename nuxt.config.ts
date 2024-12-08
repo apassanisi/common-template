@@ -4,6 +4,10 @@ import 'dotenv/config';
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   ssr: true,
+  nitro: {
+    preset: 'netlify' 
+  },
+  generate: {},
   devtools: { enabled: true },
   runtimeConfig: {
     public: {
