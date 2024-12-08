@@ -1,4 +1,4 @@
-import type { EntrySkeletonType } from 'contentful';
+import type { EntryFields, EntrySkeletonType } from 'contentful';
 
 export interface Product {
   id: string;
@@ -11,19 +11,31 @@ export interface Product {
 
 export interface ProductFields extends EntrySkeletonType {
   fields: {
-    id: number;
-    title: string;
-    description: string;
-    price: number;
-    image: { fields: { file: { url: string } } } | null;
+    id: EntryFields.Text;
+    title: EntryFields.Text;
+    description: EntryFields.Text;
+    price: EntryFields.Number;
+    image?: {
+      fields: {
+        file: {
+          url: EntryFields.Text;
+        };
+      };
+    };
   };
 }
 
 export interface AboutFields extends EntrySkeletonType {
   fields: {
-    contentTypeId: string;
-    copy: any;
-    image: { fields: { file: { url: string } } } | null;
-    title: string;
+    contentTypeId: EntryFields.Text;
+    copy: EntryFields.RichText;
+    image?: {
+      fields: {
+        file: {
+          url: EntryFields.Text;
+        };
+      };
+    };
+    title: EntryFields.Text;
   };
 }

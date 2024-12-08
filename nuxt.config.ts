@@ -22,9 +22,4 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
-  nitro: {
-    prerender: {
-      routes: ['/', '/products/1', '/products/2', '/products/3', '/products/'] 
-    }
-  }
 })

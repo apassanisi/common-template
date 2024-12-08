@@ -11,7 +11,6 @@
       <SnipcartButton
         :id="product.id"
         :price="product.price"
-        :url="product.url"
         :description="product.description"
         :image="product.image"
         :name="product.title"
@@ -27,9 +26,11 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useContentful } from '~/composables/useContentful';
+import SnipcartButton from '~/components/SnipcartButton.vue';
+import type { Product } from '~/types';
 
 const route = useRoute();
-const product = ref<any>(null);
+const product = ref<Product | null>(null);
 const loading = ref(true);
 const { fetchProductById } = useContentful();
 

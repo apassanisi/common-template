@@ -21,6 +21,12 @@
             <p class="text-gray-700 mb-4">{{ product.description }}</p>
             <p class="text-lg font-semibold mb-4">${{ product.price }}</p>
           </router-link>
+          <SnipcartButton
+            :id="product.id"
+            :price="product.price"
+            :image="product.image"
+            :name="product.title"
+          />
         </div>
       </div>
       <div v-else class="text-center mt-8">
@@ -33,18 +39,18 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useContentful } from '~/composables/useContentful';
+import SnipcartButton from '~/components/SnipcartButton.vue';
+import type { Product, AboutFields } from '~/types';
 
 const loading = ref(true);
-const aboutContent = ref<any>(null);
-const products = ref<any[]>([]);
+const aboutContent = ref<AboutFields | null>(null);
+const products = ref<Product[]>([]);
 
 const { fetchAboutContent, fetchProducts } = useContentful();
 
 onMounted(async () => {
-  const about = await fetchAboutContent();
-  const productList = await fetchProducts();
-  aboutContent.value = about;
-  products.value = productList;
+  aboutContent.value = await fetchAboutContent();
+  products.value = await fetchProducts();
   loading.value = false;
 });
 </script>

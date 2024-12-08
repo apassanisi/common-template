@@ -43,14 +43,14 @@ useHead({
   ],
   script: [
     {
-      src: "https://cdn.snipcart.com/themes/v3.0.31/default/snipcart.js",
+      src: "https://cdn.snipcart.com/themes/v3.3.3/default/snipcart.js",
       async: true,
     },
   ],
   link: [
     {
       rel: "stylesheet",
-      href: "https://cdn.snipcart.com/themes/v3.0.31/default/snipcart.css",
+      href: "https://cdn.snipcart.com/themes/v3.3.3/default/snipcart.css",
     },
   ],
 });

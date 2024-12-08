@@ -22,7 +22,7 @@ export function useContentful() {
       description: item.fields.description,
       price: item.fields.price,
       image: item.fields.image?.fields.file.url || '',
-      url: `/products/${item.fields.id}`, // Ensure URL is correctly set
+      url: `/products/${item.fields.id}`,
     }));
   }
 
@@ -55,7 +55,7 @@ export function useContentful() {
         description: item.description,
         price: item.price,
         image: item.image?.fields.file.url || '',
-        url: `/products/${item.id}`, // Ensure URL is correctly set
+        url: `/products/${item.id}`,
       };
     }
     return null;
