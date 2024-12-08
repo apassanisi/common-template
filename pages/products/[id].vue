@@ -24,50 +24,17 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
 import { ref, onMounted } from 'vue';
-import { createClient } from 'contentful';
-import { useRuntimeConfig } from '#app';
-import type { Product, ProductFields } from '~/types';
-import SnipcartButton from '~/components/SnipcartButton.vue';
+import { useRoute } from 'vue-router';
+import { useContentful } from '~/composables/useContentful';
 
 const route = useRoute();
-const config = useRuntimeConfig();
-
-const client = createClient({
-  space: config.public.contentfulSpaceId,
-  accessToken: config.public.contentfulAccessToken,
-});
-
-const product = ref<Product | null>(null);
+const product = ref<any>(null);
 const loading = ref(true);
+const { fetchProductById } = useContentful();
 
 onMounted(async () => {
-  const productId = route.params.id as string;
-  try {
-    const response = await client.getEntries<ProductFields>({
-      content_type: 'product',
-      'fields.id': productId,
-    });
-
-    if (response.items.length > 0) {
-      const item = response.items[0].fields;
-      product.value = {
-        id: `${item.id}`,
-        title: item.title,
-        description: item.description, // Correctly fetch description
-        price: item.price,
-        image: item.image?.fields.file.url || '',
-        url: `/products/${item.id}`, // Use dynamic route
-      };
-      console.log('Product data:', product.value); // Log product data
-    } else {
-      console.warn('No entries found for product ID:', productId);
-    }
-  } catch (error) {
-    console.error("Error fetching product details:", error);
-  } finally {
-    loading.value = false;
-  }
+  product.value = await fetchProductById(route.params.id as string);
+  loading.value = false;
 });
 </script>

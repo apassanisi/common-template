@@ -13,12 +13,6 @@ export default defineNuxtConfig({
       snipcartSecretApiKey: process.env.SNIPCART_SECRET_API_KEY,
     }
   },
-  generate: {
-    routes: async () => {
-      const { data } = await axios.get('https://cdn.contentful.com/spaces/YOUR_SPACE_ID/environments/master/entries?access_token=YOUR_ACCESS_TOKEN&content_type=product')
-      return data.items.map(item => `/products/${item.fields.id}`)
-    }
-  },
   css: [
     '~/assets/css/tailwind.css'
   ],
@@ -28,4 +22,9 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
+  nitro: {
+    prerender: {
+      routes: ['/', '/products/1', '/products/2', '/products/3', '/products/'] 
+    }
+  }
 })
