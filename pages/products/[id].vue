@@ -11,6 +11,7 @@
       <SnipcartButton
         :id="product.id"
         :price="product.price"
+        :url="product.url"
         :description="product.description"
         :image="product.image"
         :name="product.title"
@@ -54,10 +55,10 @@ onMounted(async () => {
       product.value = {
         id: `${item.id}`,
         title: item.title,
-        description: item.description, // Correctly fetch description
+        description: item.title,
         price: item.price,
         image: item.image?.fields.file.url || '',
-        url: `/products/${item.id}`, // Use dynamic route
+        url: `/}`, // Use dynamic route
       };
       console.log('Product data:', product.value); // Log product data
     } else {

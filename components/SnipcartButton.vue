@@ -17,6 +17,7 @@ import { defineProps } from 'vue';
 interface SnipcartButtonProps {
   id: string;
   price: number;
+  url: string;
   description: string;
   image: string;
   name: string;
