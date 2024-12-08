@@ -1,5 +1,5 @@
 <template>
-  <header class="bg-gray-800 text-white p-4 top-0 z-50">
+  <header class="bg-gray-800 text-white p-4 sticky top-0 z-50">
     <nav class="container mx-auto flex justify-between items-center">
       <router-link to="/" class="text-xl font-bold">My E-commerce</router-link>
       <div class="hidden md:flex space-x-4">
