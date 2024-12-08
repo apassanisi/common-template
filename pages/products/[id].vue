@@ -58,7 +58,7 @@ onMounted(async () => {
         description: item.title, // Assuming description is the same as title
         price: item.price,
         image: item.image?.fields.file.url || '',
-        url: `https://common-template.netlify.app/products/${item.id}`, // Use dynamic route
+        url: `/products/${item.id}`, // Use dynamic route
       };
       console.log('Product data:', product.value); // Log product data
     } else {
