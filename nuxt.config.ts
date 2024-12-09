@@ -5,9 +5,6 @@ import vuetify from 'vite-plugin-vuetify';
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: true,
-  nitro: {
-    preset: 'netlify' 
-  },
   runtimeConfig: {
     public: {
       contentfulSpaceId: process.env.CONTENTFUL_SPACE_ID,
@@ -15,6 +12,7 @@ export default defineNuxtConfig({
       snipcartApiKey: process.env.SNIPCART_API_KEY,
       snipcartSecretApiKey: process.env.SNIPCART_SECRET_API_KEY,
       calendlyUrl: process.env.CALENDLY_URL,
+      siteTitle: process.env.SITE_TITLE,
     }
   },
   css: [
@@ -38,4 +36,7 @@ export default defineNuxtConfig({
       vuetify(),
     ],
   },
+  components: true,
+  composables: true,
+  types: true,
 })

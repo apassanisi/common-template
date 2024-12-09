@@ -1,75 +1,51 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col cols="12" class="text-center">
-        <h1 class="text-4xl font-bold mb-4">Products</h1>
-      </v-col>
-    </v-row>
-    <v-row v-if="products && products.length" class="mt-8">
-      <v-col v-for="product in products" :key="product.id" cols="12" md="4">
-        <v-card>
-          <v-img :src="product.image" alt="Product Image" class="mb-4" />
-          <v-card-title>{{ product.title }}</v-card-title>
-          <v-card-subtitle class="text-gray-700 mb-4">{{ product.description }}</v-card-subtitle>
-          <v-card-text class="text-lg font-semibold mb-4">${{ product.price }}</v-card-text>
-          <v-card-actions>
-            <router-link :to="`/products/${product.id}`">
-              <v-btn color="primary">View Details</v-btn>
-            </router-link>
-            <SnipcartButton
-              :id="product.id"
-              :price="product.price"
-              :image="product.image"
-              :name="product.title"
-            />
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row v-else class="text-center mt-8">
-      <v-col cols="12">
-        <p>No products available at the moment.</p>
-      </v-col>
-    </v-row>
-  </v-container>
+  <section v-if="loading" class="flex justify-center items-center min-h-screen">
+    <p>Loading...</p>
+  </section>
+  <section v-else>
+    <h2 class="text-lg font-bold mb-2">Products</h2>
+    <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <li v-for="product in products" :key="product.id" class="bg-black-light shadow-md rounded-lg overflow-hidden">
+        <a :href="product.url">
+          <img :src="product.image" alt="" class="w-full h-auto mb-2" />
+          <div class="p-4">
+            <h3 class="text-md font-semibold">{{ product?.title }}</h3>
+            <p>{{ product?.description }}</p>
+            <p class="font-bold">{{ currency(product?.price) }}</p>
+            <ShoppingCartIcon class="w-5 h-5 inline-block" />
+          </div>
+        </a>
+      </li>
+    </ul>
+  </section>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useContentful } from '~/composables/useContentful';
-import SnipcartButton from '~/components/SnipcartButton.vue';
 import type { Product } from '~/types';
+import { ShoppingCartIcon } from '@heroicons/vue/outline';
 
 const products = ref<Product[]>([]);
 const loading = ref(true);
 const { fetchProducts } = useContentful();
 
 onMounted(async () => {
-  products.value = await fetchProducts();
-  loading.value = false;
+  try {
+    products.value = [
+      { id: 1, title: 'Placeholder Product 1', description: 'Description for product 1', price: 10, image: 'placeholder-image-1.jpg', url: '#' },
+      { id: 2, title: 'Placeholder Product 2', description: 'Description for product 2', price: 20, image: 'placeholder-image-2.jpg', url: '#' },
+      // ...more placeholder products...
+    ];
+  } finally {
+    loading.value = false;
+  }
 });
+
+const currency = (value: number) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(value);
+};
 </script>
-
-<style scoped>
-h1 {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-@media (min-width: 640px) {
-  h1 {
-    font-size: 3rem;
-  }
-}
-
-.v-card {
-  margin-bottom: 1rem;
-}
-
-@media (min-width: 640px) {
-  .v-card {
-    margin-bottom: 2rem;
-  }
-}
-</style>

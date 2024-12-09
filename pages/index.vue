@@ -1,106 +1,76 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col cols="12" class="text-center">
-        <h1 class="text-4xl font-bold mb-4">Welcome to the Artist Portfolio & Shop</h1>
-        <p class="text-lg mb-8">Explore the collection of artworks and shop your favorites.</p>
-      </v-col>
-    </v-row>
-    <v-carousel>
-      <v-carousel-item v-for="artwork in artworks" :key="artwork.id">
-        <v-img :src="artwork.image" :alt="artwork.title"></v-img>
-          <h3>{{ artwork.title }}</h3>
-          <p>{{ artwork.description }}</p>
-      </v-carousel-item>
-    </v-carousel>
-    <v-row class="mt-8" id="contact">
-      <v-col cols="12" class="text-center">
-        <h2 class="text-2xl font-bold mb-4">Contact</h2>
-        <p class="text-lg mb-4">Feel free to reach out for commissions or inquiries.</p>
-        <p class="text-lg mb-4">Email: artist@example.com</p>
-        <p class="text-lg mb-4">Phone: (123) 456-7890</p>
-        <v-btn color="primary" @click="openModal">Schedule a Call</v-btn>
-      </v-col>
-    </v-row>
-    <div v-show="isModalOpen" class="fixed inset-0 bg-black flex items-center justify-center z-50" @click.self="closeModal">
-      <Modal @close="closeModal">
-        <div class="p-4">
-          <h2 class="text-xl font-bold mb-4">Schedule a Call</h2>
-          <v-btn icon @click="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-          <div class="calendly-inline-widget" :data-url="calendlyUrl"></div>
-        </div>
-      </Modal>
+  <div class="">
+    <main class="flex-grow container mx-auto p-4">
+      <section v-if="loading" class="flex justify-center items-center min-h-screen">
+        <p>Loading...</p>
+      </section>
+      <section v-else>
+        <ul class="flex flex-wrap">
+          <li v-for="(artwork, index) in artworks" :key="artwork.id" class="w-full sm:w-1/2 md:w-1/3 p-2 cursor-pointer" @click="openModal(index)">
+            <img :src="artwork.image" alt="" class="w-full h-64 object-cover" />
+          </li>
+        </ul>
+      </section>
+      <section v-if="!loading && contact" class="text-center">
+        <h2 class="text-lg font-bold mb-2">Contact</h2>
+        <p>{{ contact?.name }}</p>
+        <ul class="flex justify-center space-x-4 mt-4">
+          <li v-for="link in contact?.socialMediaLinks" :key="link.fields.url">
+            <a :href="link.fields.url" target="_blank">
+              <i :class="`fab fa-${link.fields.platform.toLowerCase()}`">{{ link.fields.platform }}</i>
+            </a>
+          </li>
+        </ul>
+      </section>
+    </main>
+    <div v-if="isModalOpen" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center">
+      <div class="relative bg-black-light p-4 rounded-lg max-w-3xl w-full">
+        <button @click="closeModal" class="absolute top-2 right-2 text-lavender">&times;</button>
+        <carousel :images="artworks.map(artwork => artwork.image)" :startIndex="currentImageIndex" />
+      </div>
     </div>
-  </v-container>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useToggle } from '@vueuse/core';
-import Modal from '~/components/Modal.vue';
-import type { Artwork } from '~/types';
-import { useRuntimeConfig } from '#app';
-import { VCarousel, VCarouselItem, VImg } from 'vuetify/components';
+import { useContentful } from '~/composables/useContentful';
+import type { Artwork, Contact } from '~/types';
+import Carousel from '~/components/Carousel.vue';
 
 const artworks = ref<Artwork[]>([]);
-const [isModalOpen, toggleModal] = useToggle(false);
-const config = useRuntimeConfig();
-const calendlyUrl = ref(config.public.calendlyUrl || 'https://calendly.com/your-calendly-url');
+const contact = ref<Contact | null>(null);
+const loading = ref(true);
+const isModalOpen = ref(false);
+const currentImageIndex = ref(0);
+const { fetchArtworks, fetchContact } = useContentful();
 
-onMounted(() => {
-  // Mock data for artworks
-  artworks.value = [
-    {
-      id: '1',
-      title: 'Sunset Over the Mountains',
-      description: 'A beautiful sunset over the mountains.',
-      image: 'https://via.placeholder.com/800x600',
-    },
-    {
-      id: '2',
-      title: 'City Skyline',
-      description: 'A stunning view of the city skyline at night.',
-      image: 'https://via.placeholder.com/800x600',
-    },
-    // Add more mock artworks as needed
-  ];
+onMounted(async () => {
+  try {
+    artworks.value = [
+      { id: 1, image: 'placeholder-artwork-1.jpg' },
+      { id: 2, image: 'placeholder-artwork-2.jpg' },
+      // ...more placeholder artworks...
+    ];
+    contact.value = {
+      name: 'Placeholder Contact',
+      socialMediaLinks: [
+        { fields: { url: '#', platform: 'facebook' } },
+        { fields: { url: '#', platform: 'twitter' } },
+        // ...more placeholder links...
+      ],
+    };
+  } finally {
+    loading.value = false;
+  }
 });
 
-function openModal() {
-  toggleModal(true);
-}
+const openModal = (index: number) => {
+  currentImageIndex.value = index;
+  isModalOpen.value = true;
+};
 
-function closeModal() {
-  toggleModal(false);
-}
+const closeModal = () => {
+  isModalOpen.value = false;
+};
 </script>
-
-<style scoped>
-h1 {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-@media (min-width: 640px) {
-  h1 {
-    font-size: 3rem;
-  }
-}
-
-.v-carousel-item {
-  text-align: center;
-}
-
-.v-btn {
-  margin-bottom: 1rem;
-}
-
-@media (min-width: 640px) {
-  .v-btn {
-    margin-bottom: 2rem;
-  }
-}
-</style>

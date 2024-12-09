@@ -1,77 +1,57 @@
 <template>
-  <v-container>
-    <v-btn @click="goBack" color="primary" class="mb-4">
-      <v-icon left>mdi-arrow-left</v-icon> Back
-    </v-btn>
-    <v-row>
-      <v-col cols="12" class="text-center">
-        <div v-if="loading">
-          <p>Loading product details...</p>
-        </div>
-        <div v-else-if="product">
-          <h1 class="text-4xl font-bold mb-4">{{ product.title }}</h1>
-          <v-img :src="product.image" alt="Product Image" class="mx-auto mb-4" />
-          <p class="text-gray-700 mb-4">{{ product.description }}</p>
-          <p class="text-lg font-semibold mb-4">${{ product.price }}</p>
-          <SnipcartButton
-            :id="product.id"
-            :price="product.price"
-            :description="product.description"
-            :image="product.image"
-            :name="product.title"
-          />
-        </div>
-        <div v-else>
-          <p>Product not found.</p>
-        </div>
-      </v-col>
-    </v-row>
-  </v-container>
+  <section v-if="loading" class="flex justify-center items-center min-h-screen">
+    <p>Loading...</p>
+  </section>
+  <section v-else class="bg-black-light shadow-md rounded-lg p-4 flex flex-col md:flex-row">
+    <img :src="product.image" alt="" class="w-full md:w-1/2 h-auto mb-4 md:mb-0 md:mr-4" />
+    <div class="flex flex-col justify-between">
+      <div>
+        <h2 class="text-2xl font-bold mb-2">{{ product.title }}</h2>
+        <p class="text-lg mb-4">{{ product.description }}</p>
+        <p class="text-xl font-bold mb-4">{{ currency(product.price) }}</p>
+        <ShoppingCartIcon class="w-5 h-5 inline-block" />
+      </div>
+      <SnipcartButton
+          :id="product.id"
+          :price="product.price"
+          :description="product.description"
+          :image="product.image"
+          :name="product.title"
+        />
+    </div>
+  </section>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { useContentful } from '~/composables/useContentful';
-import SnipcartButton from '~/components/SnipcartButton.vue';
 import type { Product } from '~/types';
+import SnipcartButton from '~/components/SnipcartButton.vue';
+import { ShoppingCartIcon } from '@heroicons/vue/outline';
 
 const route = useRoute();
-const router = useRouter();
 const product = ref<Product | null>(null);
 const loading = ref(true);
 const { fetchProductById } = useContentful();
 
 onMounted(async () => {
-  product.value = await fetchProductById(route.params.id as string);
-  loading.value = false;
+  try {
+    product.value = {
+      id: route.params.id as string,
+      title: 'Placeholder Product',
+      description: 'Description for placeholder product',
+      price: 30,
+      image: 'placeholder-image.jpg',
+    };
+  } finally {
+    loading.value = false;
+  }
 });
 
-function goBack() {
-  router.back();
-}
+const currency = (value: number) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(value);
+};
 </script>
-
-<style scoped>
-h1 {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-@media (min-width: 640px) {
-  h1 {
-    font-size: 3rem;
-  }
-}
-
-.v-btn {
-  margin-bottom: 1rem;
-}
-
-@media (min-width: 640px) {
-  .v-btn {
-    margin-bottom: 2rem;
-  }
-}
-</style>

@@ -1,10 +1,10 @@
 <template>
-  <v-app>
+  <div>
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
     <div :hidden="true" id="snipcart" :data-api-key="snipcartApiKey"></div>
-  </v-app>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -12,7 +12,7 @@ import { useRuntimeConfig } from "#app";
 import "vuetify/styles";
 
 const config = useRuntimeConfig();
-const snipcartApiKey = config.public.snipcartApiKey || "your-default-api-key";
+const snipcartApiKey = 'placeholder-api-key';
 
 useHead({
   title: "Demo E-commerce",
@@ -40,31 +40,3 @@ useHead({
   ],
 });
 </script>
-
-<style scoped>
-header {
-  background-color: #1976d2;
-  color: white;
-  padding: 1rem;
-  text-align: center;
-}
-
-@media (min-width: 640px) {
-  header {
-    padding: 2rem;
-  }
-}
-
-.v-footer {
-  background-color: #1976d2;
-  color: white;
-  text-align: center;
-  padding: 1rem;
-}
-
-@media (min-width: 640px) {
-  .v-footer {
-    padding: 2rem;
-  }
-}
-</style>
